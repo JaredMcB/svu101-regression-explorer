@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}Regression Explorer — SVU 101{% endblock %}
+
+{% block head %}
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+{% endblock %}
+
+{% block headerextra %}
+  <span class="who">SVU 101 · AI Literacy · Week 1</span>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================================================== data loading ==== -->
+<section class="panel loader" id="loader">
+  <h1>Load the data</h1>
+  <p class="tagline">Two columns. Row 1 names them. Everything below is data.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab is-active" data-tab="sheet" role="tab">Google Sheet</button>
+    <button class="tab" data-tab="paste" role="tab">Paste CSV</button>
+    <button class="tab" data-tab="file"  role="tab">Upload file</button>
+    <button class="tab" data-tab="demo"  role="tab">Sample data</button>
+  </div>
+
+  <div class="tabpane is-active" data-pane="sheet">
+    <label for="sheet-url">Google Sheets link</label>
+    <div class="row">
+      <input id="sheet-url" type="url" spellcheck="false"
+             placeholder="https://docs.google.com/spreadsheets/d/…/edit#gid=0">
+      <button id="load-sheet">Load</button>
+    </div>
+    <p class="hint">
+      The sheet must be shared: <strong>Share → General access → Anyone with
+      the link → Viewer</strong>. Nothing is stored — the applet reads it fresh
+      each time you press Load.
+    </p>
+  </div>
+
+  <div class="tabpane" data-pane="paste">
+    <label for="paste-csv">CSV text</label>
+    <textarea id="paste-csv" rows="6" spellcheck="false"
+placeholder="Battery used (%),Screen time (hours)
+21,2.4
+26,2.2
+33,3.6"></textarea>
+    <button id="load-paste">Load</button>
+  </div>
+
+  <div class="tabpane" data-pane="file">
+    <label for="csv-file">CSV file</label>
+    <input id="csv-file" type="file" accept=".csv,text/csv">
+    <p class="hint">Read in your browser — the file is never uploaded anywhere.</p>
+  </div>
+
+  <div class="tabpane" data-pane="demo">
+    <p class="hint">The Week 1 screen-time data: sixteen students reported the
+       battery they burned through and their screen time for the same period.</p>
+    <button id="load-demo">Load the Week 1 data</button>
+  </div>
+
+  <p id="load-status" class="status" role="status" aria-live="polite"></p>
+
+  <details class="setup">
+    <summary>How to set up the sheet</summary>
+    <table class="mini">
+      <tr><th></th><th>A</th><th>B</th></tr>
+      <tr><th>1</th><td><em>Battery used (%)</em></td><td><em>Screen time (hours)</em></td></tr>
+      <tr><th>2</th><td>21</td><td>2.4</td></tr>
+      <tr><th>3</th><td>26</td><td>2.2</td></tr>
+      <tr><th>4</th><td>…</td><td>…</td></tr>
+    </table>
+    <p class="hint">
+      Row 1 holds the variable <em>names</em> — type whatever you like, and the
+      axes will use them. Column A is the predictor, column B is the response.
+    </p>
+  </details>
+</section>
+
+<!-- ============================ compact strip, once data is loaded ======= -->
+<div class="databar" id="databar" hidden>
+  <div class="databar-id">
+    <strong id="db-vars"></strong>
+    <span id="db-counts"></span>
+  </div>
+  <div class="databar-controls">
+    <label for="train-pct">train %</label>
+    <input id="train-pct" type="number" min="10" max="95" step="5" value="80">
+    <label for="seed">seed</label>
+    <input id="seed" type="number" min="0" step="1" value="1">
+    <button id="reshuffle" class="ghost">Reshuffle</button>
+    <button id="change-data" class="ghost">Change data</button>
+  </div>
+</div>
+
+<!-- ========================================================== the six ==== -->
+<div id="workspace" hidden>
+
+  <!-- ---------------------------------------------------- training row -- -->
+  <div class="gridrow">
+
+    <section class="panel pane train">
+      <h3><span class="chip train">Training</span> Data</h3>
+      <div class="tablewrap"><table class="data" id="train-table"></table></div>
+    </section>
+
+    <section class="panel pane train">
+      <h3>
+        <span class="chip train">Training</span> Your line
+        <span class="h3-actions">
+          <button id="fit" class="ghost">Reveal best</button>
+          <button id="reset-line" class="ghost">Reset</button>
+        </span>
+      </h3>
+      <div class="controls">
+        <div class="field">
+          <label for="m">slope <span class="beta">m = β₁</span></label>
+          <input id="m" type="text" inputmode="decimal" autocomplete="off" value="0">
+        </div>
+        <div class="field">
+          <label for="b">intercept <span class="beta">b = β₀</span></label>
+          <input id="b" type="text" inputmode="decimal" autocomplete="off" value="0">
+        </div>
+      </div>
+      <p class="click-hint" id="click-hint" role="status" aria-live="polite"></p>
+      <div id="train-plot" class="plot clickable"></div>
+      <div class="footer">
+        <label class="check"><input type="checkbox" id="show-resid"> residuals</label>
+        <div class="readout" id="train-mse"></div>
+      </div>
+    </section>
+
+    <section class="panel pane train">
+      <h3><span class="chip train">Training</span> The loss surface</h3>
+      <div class="formula" id="mse-formula"></div>
+      <div id="loss-plot" class="plot"></div>
+      <div class="readout wide" id="loss-readout"></div>
+    </section>
+  </div>
+
+  <!-- -------------------------------------------------------- test row -- -->
+  <div class="gridrow">
+
+    <section class="panel pane test">
+      <h3><span class="chip test">Test</span> Data</h3>
+      <div class="tablewrap"><table class="data" id="test-table"></table></div>
+    </section>
+
+    <section class="panel pane test">
+      <h3><span class="chip test">Test</span> The same line, on new points</h3>
+      <div id="test-plot" class="plot"></div>
+      <div class="footer">
+        <label class="check"><input type="checkbox" id="show-resid-test"> residuals</label>
+        <div class="readout" id="test-mse"></div>
+      </div>
+    </section>
+
+    <section class="panel pane test">
+      <h3><span class="chip test">Test</span> Make a prediction</h3>
+      <div class="formula" id="pred-formula-tex"></div>
+      <div class="field">
+        <label for="pred-x" id="pred-x-label">predictor value</label>
+        <input id="pred-x" type="text" inputmode="decimal" autocomplete="off">
+      </div>
+      <div class="prediction" id="pred-out">
+        <span class="pred-empty">Enter a value to get an estimate.</span>
+      </div>
+      <p class="warn" id="pred-warn" hidden></p>
+    </section>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='regression.js') }}"></script>
+{% endblock %}

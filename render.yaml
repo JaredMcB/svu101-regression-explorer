@@ -1,0 +1,13 @@
+# Render blueprint for the SVU 101 Regression Explorer.
+#
+# There is no database and no API key: the applet is a static front end with a
+# thin Flask proxy in front of Google Sheets. The free plan is fine -- a cold
+# start costs the first person of the day a few seconds.
+services:
+  - type: web
+    name: svu101-regression-explorer
+    runtime: python
+    plan: free               # bump to "starter" for class to avoid cold starts
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /healthz

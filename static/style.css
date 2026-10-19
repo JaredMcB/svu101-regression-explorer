@@ -1,0 +1,253 @@
+/* Regression Explorer — styled to match the SVU 101 slide deck.
+   Palette sampled from the deck: navy #1A2C99 dominant, the crimson→blue
+   gradient on statement slides, periwinkle accent, mist ground.
+   Type: Space Grotesk display / DM Sans body, as in the deck. */
+:root {
+  --navy:    #1a2c99;
+  --navy-dk: #14217a;
+  --blue:    #1731b1;
+  --crimson: #9e1b32;
+  --peri:    #5682f3;
+  --mist:    #eff1f8;
+  --pale:    #e2e9fc;
+  --ink:     #16193a;
+  --muted:   #6b7194;
+  --border:  #d5dcf0;
+  --surface: #ffffff;
+
+  --train: #9e1b32;          /* training data = crimson */
+  --test:  #1a2c99;          /* test data = navy */
+  --line:  #16193a;
+  --resid: #8b93b8;
+
+  --display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --sans: "DM Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--mist); color: var(--ink);
+  font: 15px/1.5 var(--sans); min-height: 100vh;
+}
+h1, h2, h3 { font-family: var(--display); color: var(--navy); font-weight: 700; }
+
+/* ------------------------------------------------------------- top bar -- */
+.topbar {
+  display: flex; align-items: center; gap: .7rem;
+  /* the deck's 45° crimson→blue statement-slide gradient */
+  background: linear-gradient(135deg, var(--crimson) 0%, var(--blue) 100%);
+  color: #fff; padding: .5rem 1.1rem; flex: 0 0 auto;
+}
+.logo { height: 28px; width: 28px; filter: brightness(0) invert(1); }
+.brand { font-family: var(--display); font-weight: 700; letter-spacing: .2px; font-size: .98rem; }
+.brand-sub {
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .18em; font-weight: 700;
+  background: rgba(255,255,255,.2); padding: .18rem .55rem; border-radius: 999px;
+}
+.topbar .who {
+  margin-left: auto; opacity: .9; font-size: .68rem;
+  text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
+}
+main { padding: 1.1rem; max-width: 1700px; margin: 0 auto; }
+
+/* -------------------------------------------------------------- panels -- */
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 4px solid var(--navy); border-radius: 12px;
+  padding: .95rem 1.05rem; box-shadow: 0 2px 10px rgba(22,25,58,.05);
+}
+.panel.train { border-top-color: var(--crimson); }
+.panel.test  { border-top-color: var(--navy); }
+.loader { max-width: 720px; margin: 1.5rem auto; }
+.panel h1 { margin: 0 0 .1rem; font-size: 1.5rem; }
+.panel h3 {
+  margin: 0 0 .55rem; font-size: .92rem; display: flex;
+  align-items: center; gap: .45rem; flex-wrap: wrap;
+}
+.h3-actions { margin-left: auto; display: flex; gap: .3rem; }
+.chip {
+  font-family: var(--sans); font-size: .58rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .13em;
+  padding: .16rem .48rem; border-radius: 999px;
+}
+.chip.train { background: rgba(158,27,50,.12); color: var(--crimson); }
+.chip.test  { background: rgba(26,44,153,.11); color: var(--navy); }
+.tagline {
+  font-family: var(--display); color: var(--muted); font-weight: 500;
+  margin: 0 0 1rem; font-size: .92rem;
+}
+.hint { font-size: .78rem; color: var(--muted); margin: .4rem 0; }
+.warn { font-size: .76rem; color: var(--crimson); font-weight: 700; margin: .4rem 0 0; }
+
+/* ------------------------------------------------------------ controls -- */
+label { display: block; margin: 0 0 .25rem; font-weight: 700; font-size: .74rem; color: var(--muted); }
+input, select, textarea {
+  width: 100%; padding: .45rem .6rem; border: 1px solid var(--border);
+  border-radius: 8px; font: inherit; background: #fff; color: var(--ink);
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(26,44,153,.15);
+}
+input.bad { border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(158,27,50,.14); }
+textarea { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .82rem; }
+button {
+  background: var(--navy); color: #fff; border: 0;
+  padding: .45rem 1rem; border-radius: 8px;
+  font: 700 .85rem var(--sans); cursor: pointer;
+  transition: background .15s; white-space: nowrap;
+}
+button:hover { background: var(--navy-dk); }
+button.ghost {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--navy); font-weight: 700; font-size: .72rem; padding: .3rem .6rem;
+}
+button.ghost:hover { background: var(--pale); }
+.row { display: flex; gap: .5rem; align-items: center; }
+.row input { flex: 1; }
+.check {
+  display: inline-flex; align-items: center; gap: .35rem; font-weight: 700;
+  font-size: .74rem; color: var(--muted); margin: 0; cursor: pointer;
+}
+.check input { width: auto; }
+
+/* ---------------------------------------------------------------- tabs -- */
+.tabs { display: flex; gap: .2rem; margin-bottom: .85rem; border-bottom: 1px solid var(--border); }
+.tab {
+  background: transparent; color: var(--muted); border: 0;
+  border-bottom: 3px solid transparent; border-radius: 0;
+  padding: .4rem .8rem; font-weight: 700; font-size: .82rem;
+}
+.tab:hover { background: transparent; color: var(--ink); }
+.tab.is-active { color: var(--navy); border-bottom-color: var(--navy); }
+.tabpane { display: none; }
+.tabpane.is-active { display: block; }
+.tabpane button { margin-top: .7rem; }
+
+.status { font-size: .8rem; margin: .75rem 0 0; min-height: 1.2em; }
+.status.err { color: var(--crimson); font-weight: 700; }
+.status.ok  { color: #1c6b3a; font-weight: 700; }
+
+.setup { margin-top: .85rem; }
+.setup summary { cursor: pointer; font-size: .8rem; font-weight: 700; color: var(--navy); }
+table.mini { border-collapse: collapse; margin: .65rem 0; font-size: .78rem; }
+table.mini th, table.mini td { border: 1px solid var(--border); padding: .28rem .55rem; }
+table.mini th { background: var(--pale); color: var(--navy); }
+
+/* -------------------------------------------------------- data bar ----- */
+.databar {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--navy); border-radius: 10px;
+  padding: .45rem .8rem; margin-bottom: .55rem;
+}
+.databar-id strong {
+  font-family: var(--display); color: var(--navy); font-size: .92rem;
+}
+.databar-id span { color: var(--muted); font-size: .78rem; margin-left: .5rem; }
+.databar-controls { margin-left: auto; display: flex; align-items: center; gap: .4rem; }
+.databar-controls label { margin: 0; font-size: .68rem; }
+.databar-controls input { width: 62px; padding: .25rem .4rem; font-size: .8rem; }
+.pill {
+  display: inline-block; padding: .1rem .5rem; border-radius: 999px;
+  font-size: .72rem; font-weight: 700; margin-left: .3rem;
+}
+.pill.train { background: rgba(158,27,50,.12); color: var(--crimson); }
+.pill.test  { background: rgba(26,44,153,.11); color: var(--navy); }
+
+/* ------------------------------------------------- the six-pane grid --- */
+.gridrow {
+  display: grid; gap: .55rem;
+  grid-template-columns: minmax(200px, .78fr) minmax(300px, 1.35fr) minmax(280px, 1.2fr);
+}
+.pane { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.plot { width: 100%; min-height: 150px; flex: 1 1 auto; }
+
+/* Once data is loaded the whole thing becomes a single non-scrolling screen:
+   both rows visible at once, panes scrolling internally if they must. Falls
+   back to ordinary page scrolling on short windows, where forcing two rows
+   into the viewport would squash the plots into uselessness. */
+@media (min-height: 700px) {
+  body.has-data { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  /* width: 100% matters: as a flex item with auto side margins, main would
+     otherwise shrink to its content, and every redraw that changed a number's
+     width would resize and re-centre the whole grid -- moving the plot under
+     the mouse between the first click and the second. */
+  body.has-data main {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    padding: .55rem .7rem; gap: .55rem;
+    width: 100%; box-sizing: border-box;
+  }
+  body.has-data #workspace {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-rows: 1fr 1fr; gap: .55rem;
+  }
+  body.has-data .gridrow { min-height: 0; }
+  body.has-data .panel { padding: .6rem .7rem; }
+}
+@media (max-width: 1150px) {
+  .gridrow { grid-template-columns: 1fr; }
+  body.has-data { height: auto; overflow: visible; display: block; }
+  body.has-data main { display: block; }
+  body.has-data #workspace { display: block; }
+  body.has-data .pane { margin-bottom: .55rem; }
+  .plot { height: 300px; flex: none; }
+}
+
+.controls { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; margin-bottom: .3rem; }
+.controls .field { min-width: 0; }
+.beta { color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; }
+/* Click-two-points line drawing on the training plot. */
+.click-hint { font-size: .78rem; color: var(--muted); margin: 0 0 .25rem; min-height: 1.1em; }
+.click-hint strong { color: var(--train); }
+.plot.clickable .nsewdrag,
+.plot.clickable .draglayer { cursor: crosshair !important; }
+
+/* ------------------------------------------------------------ readouts -- */
+.footer {
+  display: flex; align-items: center; gap: .7rem; margin-top: .4rem; flex-wrap: wrap;
+}
+.readout {
+  flex: 1; padding: .35rem .6rem; border-radius: 8px;
+  background: var(--mist); font-size: .76rem; line-height: 1.4; min-width: 0;
+}
+.readout.wide { margin-top: .4rem; }
+.readout .big {
+  font-family: var(--display); font-size: 1.1rem; font-weight: 700; color: var(--crimson);
+}
+.readout .big.test { color: var(--navy); }
+.readout .lbl { color: var(--muted); }
+
+.formula {
+  background: var(--mist); border-radius: 8px; padding: .35rem .5rem;
+  margin-bottom: .45rem; text-align: center; font-size: .82rem; overflow-x: auto;
+}
+.formula .katex { color: var(--navy); }
+
+.prediction {
+  margin: .5rem 0 0; padding: .7rem; border-radius: 10px;
+  background: var(--pale); border: 1px solid rgba(26,44,153,.18); text-align: center;
+}
+.prediction .value {
+  font-family: var(--display); font-size: 1.85rem; font-weight: 700;
+  color: var(--navy); display: block; line-height: 1.1;
+}
+.prediction .units { font-size: .74rem; color: var(--muted); }
+.pred-empty { color: var(--muted); font-size: .82rem; }
+
+/* -------------------------------------------------------- data tables -- */
+.tablewrap {
+  flex: 1 1 auto; min-height: 0; overflow: auto;
+  border: 1px solid var(--border); border-radius: 8px;
+}
+table.data { border-collapse: collapse; width: 100%; font-size: .74rem; }
+table.data th, table.data td { padding: .22rem .5rem; text-align: right; white-space: nowrap; }
+table.data th {
+  position: sticky; top: 0; background: var(--pale); color: var(--navy);
+  font-weight: 700; font-size: .68rem; border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+table.data th:first-child, table.data td:first-child { text-align: left; color: var(--muted); }
+table.data tbody tr:nth-child(even) { background: #fafbff; }
+table.data td.resid { font-variant-numeric: tabular-nums; }
+table.data td.pos { color: #1c6b3a; }
+table.data td.neg { color: var(--crimson); }

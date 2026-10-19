@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Regression Explorer{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='knight-logo.svg') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='knight-logo.svg') }}">
+  <!-- Space Grotesk + DM Sans: the pairing used in the SVU 101 slide deck. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <img class="logo" src="{{ url_for('static', filename='SVUTowerLogo.svg') }}"
+         alt="Southern Virginia University tower logo">
+    <span class="brand">Southern Virginia University</span>
+    <span class="brand-sub">Regression Explorer</span>
+    {% block headerextra %}{% endblock %}
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
